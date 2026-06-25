@@ -1,0 +1,35 @@
+name: Download BAAD
+
+on:
+  workflow_dispatch:  # 手动触发，方便测试
+
+jobs:
+  run-exe:
+    runs-on: windows-latest   # 如果你要运行 Windows 可执行文件，建议用 windows-latest
+    # 如果 EXE 是跨平台（.NET Core 等）也可以用 ubuntu-latest，但需确保运行时环境兼容
+
+    steps:
+      - name: Checkout repository (optional)
+        uses: actions/checkout@v4
+
+      - name: Download latest release ZIP
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}   # 自动提供的 token，用于身份验证
+        run: |
+          gh release download --pattern "*windows*.zip" --dir ./downloads --repo Deathemonic/BA-AD
+
+      - name: Extract ZIP
+        run: |
+          powershell -command "Expand-Archive -Path ./downloads/*.zip -DestinationPath ./extract -Force"
+
+      - name: Find and run EXE
+        run: |
+          $exePath = Get-ChildItem -Path ./extract -Recurse -Filter "*.exe" | Select-Object -First 1
+          if ($exePath) {
+            Write-Host "Running: $($exePath.FullName)"
+            & $exePath.FullName download japan --tables --output ./Tables
+          } else {
+            Write-Error "No EXE found in extracted files"
+            exit 1
+          }
+        shell: pwsh   # 使用 PowerShell Core
