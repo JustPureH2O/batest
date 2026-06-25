@@ -30,7 +30,7 @@ jobs:
           $exePath = Get-ChildItem -Path ./extract -Recurse -Filter "*.exe" | Select-Object -First 1
           if ($exePath) {
             Write-Host "Running: $($exePath.FullName)"
-            & $exePath.FullName download japan --tables
+            & $exePath.FullName download japan --tables --output ./Tables
           } else {
             Write-Error "No EXE found in extracted files"
             exit 1
@@ -49,7 +49,7 @@ jobs:
 
 
           # 添加生成的文件（根据 file_pattern）
-          $pattern = "Excel.zip"
+          $pattern = "Tables/*"
           # 如果有文件匹配，则添加，否则跳过
           $files = Get-ChildItem -Path $pattern -File
           if ($files.Count -eq 0) {
