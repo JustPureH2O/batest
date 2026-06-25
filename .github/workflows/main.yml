@@ -9,8 +9,11 @@ jobs:
     # 如果 EXE 是跨平台（.NET Core 等）也可以用 ubuntu-latest，但需确保运行时环境兼容
 
     steps:
-      - name: Checkout repository (optional)
+      - name: Checkout target repository (用于后续推送)
         uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Download latest release ZIP
         env:
@@ -46,7 +49,7 @@ jobs:
 
 
           # 添加生成的文件（根据 file_pattern）
-          $pattern = "${{ github.event.inputs.file_pattern }}"
+          $pattern = "(*.zip||*.db)"
           # 如果有文件匹配，则添加，否则跳过
           $files = Get-ChildItem -Path $pattern -File
           if ($files.Count -eq 0) {
