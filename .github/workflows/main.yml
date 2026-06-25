@@ -9,7 +9,7 @@ jobs:
     # 如果 EXE 是跨平台（.NET Core 等）也可以用 ubuntu-latest，但需确保运行时环境兼容
 
     steps:
-      - name: Checkout target repository (用于后续推送)
+      - name: Checkout target repository
         uses: actions/checkout@v4
         with:
           repository: ${{ github.repository }}
@@ -30,7 +30,7 @@ jobs:
           $exePath = Get-ChildItem -Path ./extract -Recurse -Filter "*.exe" | Select-Object -First 1
           if ($exePath) {
             Write-Host "Running: $($exePath.FullName)"
-            & $exePath.FullName download japan --tables --output ./Tables
+            & $exePath.FullName download japan --tables
           } else {
             Write-Error "No EXE found in extracted files"
             exit 1
@@ -47,10 +47,7 @@ jobs:
           git checkout --orphan $branch
           git rm -rf .   # 清空工作区（若需要全新分支）
 
-          # 添加生成的文件（根据 file_pattern）
-          $pattern = "extract/Tables/*"
-          # 如果有文件匹配，则添加，否则跳过
-          $files = Get-ChildItem -Path $pattern -File
+          $files = Get-ChildItem -Path ./extract -Filter "*.zip"
           if ($files.Count -eq 0) {
             Write-Host "No files found matching pattern $pattern, skipping commit."
             exit 0
