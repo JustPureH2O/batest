@@ -47,9 +47,8 @@ jobs:
           git checkout --orphan $branch
           git rm -rf .   # 清空工作区（若需要全新分支）
 
-
           # 添加生成的文件（根据 file_pattern）
-          $pattern = "Tables/*"
+          $pattern = "extract/Tables/*"
           # 如果有文件匹配，则添加，否则跳过
           $files = Get-ChildItem -Path $pattern -File
           if ($files.Count -eq 0) {
