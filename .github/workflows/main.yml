@@ -32,4 +32,34 @@ jobs:
             Write-Error "No EXE found in extracted files"
             exit 1
           }
-        shell: pwsh   # 使用 PowerShell Core
+        shell: pwsh
+        
+      - name: Upload results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          $branch = Get-Date -Format "yyyy-MM-dd-HHmmss"
+          Write-Host "Creating new brach from timestamp"
+          git checkout --orphan $branch
+          git rm -rf .   # 清空工作区（若需要全新分支）
+
+
+          # 添加生成的文件（根据 file_pattern）
+          $pattern = "${{ github.event.inputs.file_pattern }}"
+          # 如果有文件匹配，则添加，否则跳过
+          $files = Get-ChildItem -Path $pattern -File
+          if ($files.Count -eq 0) {
+            Write-Host "No files found matching pattern $pattern, skipping commit."
+            exit 0
+          }
+          git add $pattern
+
+          # 检查是否有变更
+          $changes = git status --porcelain
+          if ($changes) {
+            git commit -m "Update generated files from EXE run [skip ci]"
+            git push origin $branch
+          } else {
+            Write-Host "No changes to commit."
+          }
