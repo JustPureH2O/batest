@@ -30,7 +30,7 @@ jobs:
           $exePath = Get-ChildItem -Path ./extract -Recurse -Filter "*.exe" | Select-Object -First 1
           if ($exePath) {
             Write-Host "Running: $($exePath.FullName)"
-            & $exePath.FullName download japan --tables --output ./Tables
+            & $exePath.FullName download japan --tables
           } else {
             Write-Error "No EXE found in extracted files"
             exit 1
