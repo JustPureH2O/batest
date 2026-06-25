@@ -1,12 +1,11 @@
 name: Download BAAD
 
 on:
-  workflow_dispatch:  # 手动触发，方便测试
+  workflow_dispatch:
 
 jobs:
   run-exe:
-    runs-on: windows-latest   # 如果你要运行 Windows 可执行文件，建议用 windows-latest
-    # 如果 EXE 是跨平台（.NET Core 等）也可以用 ubuntu-latest，但需确保运行时环境兼容
+    runs-on: windows-latest
 
     steps:
       - name: Checkout target repository
@@ -17,7 +16,7 @@ jobs:
 
       - name: Download latest release ZIP
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}   # 自动提供的 token，用于身份验证
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release download --pattern "*windows*.zip" --dir ./downloads --repo Deathemonic/BA-AD
 
@@ -53,7 +52,7 @@ jobs:
             exit 0
           }
           foreach ($zip in $files) {
-            git add $zip.FullName
+            git add $zip
           }
 
           # 检查是否有变更
