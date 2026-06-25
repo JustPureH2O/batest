@@ -47,7 +47,7 @@ jobs:
           git checkout --orphan $branch
           git rm -rf .   # 清空工作区（若需要全新分支）
 
-          $files = Get-ChildItem -Path . -Recurse -Filter "*.zip"
+          $files = Get-ChildItem -Path ./output/TableBundles -Recurse -Filter "*.zip"
           if ($files.Count -eq 0) {
             Write-Host "No files found matching pattern $pattern, skipping commit."
             exit 0
